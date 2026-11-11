@@ -1,0 +1,63 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/orbs/flame_orb.gd" id="OrbScript"]
+[ext_resource type="Resource" path="res://resources/items/orb_flame.tres" id="OrbData"]
+
+[sub_resource type="StandardMaterial3D" id="OrbMat"]
+albedo_color = Color(1, 0.25, 0.025, 1)
+emission_enabled = true
+emission = Color(1, 0.15, 0.015, 1)
+emission_energy_multiplier = 1.5
+roughness = 0.35
+
+[sub_resource type="SphereMesh" id="OrbMesh"]
+material = SubResource("OrbMat")
+radius = 0.43
+height = 0.86
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="RingMat"]
+albedo_color = Color(1, 0.65, 0.12, 1)
+emission_enabled = true
+emission = Color(0.7, 0.24, 0.01, 1)
+
+[sub_resource type="TorusMesh" id="RingMesh"]
+material = SubResource("RingMat")
+inner_radius = 0.54
+outer_radius = 0.59
+rings = 16
+ring_segments = 12
+
+[sub_resource type="SphereMesh" id="SparkMesh"]
+material = SubResource("RingMat")
+radius = 0.035
+height = 0.07
+radial_segments = 6
+rings = 4
+
+[sub_resource type="ParticleProcessMaterial" id="SparkProcess"]
+direction = Vector3(0, 1, 0)
+spread = 35.0
+gravity = Vector3(0, 0.15, 0)
+initial_velocity_min = 0.15
+initial_velocity_max = 0.5
+
+[node name="FlameOrb" type="Node3D"]
+script = ExtResource("OrbScript")
+definition = ExtResource("OrbData")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Core" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("OrbMesh")
+
+[node name="Ring" type="MeshInstance3D" parent="Visual"]
+rotation_degrees = Vector3(65, 0, 0)
+mesh = SubResource("RingMesh")
+
+[node name="Sparks" type="GPUParticles3D" parent="Visual"]
+amount = 12
+lifetime = 1.2
+process_material = SubResource("SparkProcess")
+draw_pass_1 = SubResource("SparkMesh")

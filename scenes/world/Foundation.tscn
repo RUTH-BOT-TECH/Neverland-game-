@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/characters/Player.tscn" id="PlayerScene"]
 [ext_resource type="Script" path="res://scripts/player/touch_controls.gd" id="TouchScript"]
@@ -8,6 +8,9 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueUI.tscn" id="DialogueScene"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestUI.tscn" id="QuestUIScene"]
 [ext_resource type="PackedScene" path="res://scenes/ui/UpdateNotice.tscn" id="UpdateNoticeScene"]
+[ext_resource type="PackedScene" path="res://scenes/ui/FlameTrialUI.tscn" id="FlameTrialUIScene"]
+[ext_resource type="PackedScene" path="res://scenes/world/AshenShrine.tscn" id="AshenShrineScene"]
+[ext_resource type="Script" path="res://scripts/inventory/orb_inventory.gd" id="InventoryScript"]
 [ext_resource type="Script" path="res://scripts/quests/quest_manager.gd" id="QuestManagerScript"]
 [ext_resource type="Resource" path="res://resources/quests/heralds_warning.tres" id="QuestData"]
 
@@ -78,6 +81,9 @@ size = Vector3(2.6, 0.22, 1.2)
 
 [node name="Foundation" type="Node3D"]
 
+[node name="OrbInventory" type="Node" parent="."]
+script = ExtResource("InventoryScript")
+
 [node name="QuestManager" type="Node" parent="."]
 script = ExtResource("QuestManagerScript")
 quest = ExtResource("QuestData")
@@ -143,6 +149,9 @@ mesh = SubResource("Mesh_steps")
 
 [node name="Village" parent="." instance=ExtResource("VillageScene")]
 
+[node name="AshenShrine" parent="." instance=ExtResource("AshenShrineScene")]
+position = Vector3(22, 0, -8)
+
 [node name="VillageHerald" parent="." instance=ExtResource("HeraldScene")]
 position = Vector3(1.6, 0, 12.5)
 
@@ -204,6 +213,14 @@ survey_marker_path = NodePath("../../Ruins/TestMarker")
 
 [node name="UpdateNotice" parent="Overlay" instance=ExtResource("UpdateNoticeScene")]
 
+[node name="FlameTrialUI" parent="Overlay" instance=ExtResource("FlameTrialUIScene")]
+player_path = NodePath("../../Player")
+guardian_path = NodePath("../../AshenShrine/Guardian")
+quest_manager_path = NodePath("../../QuestManager")
+orb_path = NodePath("../../AshenShrine/FlameOrb")
+inventory_path = NodePath("../../OrbInventory")
+
+[connection signal="attack_pressed" from="Overlay/TouchControls" to="Player/Combat" method="try_attack"]
 [connection signal="dialogue_finished" from="Overlay/DialogueUI" to="QuestManager" method="on_herald_dialogue_finished"]
 [connection signal="move_changed" from="Overlay/TouchControls" to="Player" method="set_touch_move"]
 [connection signal="look_dragged" from="Overlay/TouchControls" to="Player" method="look_by"]

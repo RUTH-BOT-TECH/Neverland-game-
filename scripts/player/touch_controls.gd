@@ -3,10 +3,12 @@ extends Control
 signal move_changed(value: Vector2)
 signal look_dragged(delta: Vector2)
 signal jump_pressed
+signal attack_pressed
 
 var stick_touch := -1
 var look_touch := -1
 var jump_touch := -1
+var attack_touch := -1
 var stick_value := Vector2.ZERO
 var last_look_position := Vector2.ZERO
 
@@ -19,6 +21,7 @@ func _notification(what: int) -> void:
 		stick_touch = -1
 		look_touch = -1
 		jump_touch = -1
+		attack_touch = -1
 		stick_value = Vector2.ZERO
 		move_changed.emit(stick_value)
 		queue_redraw()
@@ -31,6 +34,9 @@ func _stick_center() -> Vector2:
 
 func _jump_center() -> Vector2:
 	return Vector2(size.x * 0.89, size.y * 0.78)
+
+func _attack_center() -> Vector2:
+	return Vector2(size.x * 0.75, size.y * 0.78)
 
 func _local_position(viewport_position: Vector2) -> Vector2:
 	return get_global_transform_with_canvas().affine_inverse() * viewport_position
@@ -45,7 +51,10 @@ func _input(event: InputEvent) -> void:
 		var touch := event as InputEventScreenTouch
 		var position := _local_position(touch.position)
 		if touch.pressed:
-			if position.distance_to(_jump_center()) <= _radius() * 0.85 and jump_touch == -1:
+			if position.distance_to(_attack_center()) <= _radius() * 0.75 and attack_touch == -1:
+				attack_touch = touch.index
+				attack_pressed.emit()
+			elif position.distance_to(_jump_center()) <= _radius() * 0.85 and jump_touch == -1:
 				jump_touch = touch.index
 				jump_pressed.emit()
 			elif position.distance_to(_stick_center()) <= _radius() * 1.5 and stick_touch == -1:
@@ -63,6 +72,8 @@ func _input(event: InputEvent) -> void:
 				look_touch = -1
 			if touch.index == jump_touch:
 				jump_touch = -1
+			if touch.index == attack_touch:
+				attack_touch = -1
 		queue_redraw()
 	elif event is InputEventScreenDrag:
 		var drag := event as InputEventScreenDrag
@@ -80,8 +91,14 @@ func _draw() -> void:
 	draw_circle(_stick_center() + stick_value * radius * 0.65, radius * 0.36, Color(0.82, 0.9, 1.0, 0.55))
 	draw_circle(_jump_center(), radius * 0.75, Color(0.12, 0.23, 0.28, 0.65))
 	draw_arc(_jump_center(), radius * 0.75, 0.0, TAU, 48, Color(0.9, 0.95, 1.0, 0.7), 2.0)
+	draw_circle(_attack_center(), radius * 0.68, Color(0.38, 0.12, 0.08, 0.7))
+	draw_arc(_attack_center(), radius * 0.68, 0.0, TAU, 48, Color(1.0, 0.8, 0.65, 0.7), 2.0)
 	var font := ThemeDB.fallback_font
 	var font_size := maxi(12, int(radius * 0.28))
 	var word := "JUMP"
 	var text_size := font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
 	draw_string(font, _jump_center() + Vector2(-text_size.x / 2.0, text_size.y * 0.3), word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color.WHITE)
+
+	word = "ATTACK"
+	text_size = font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
+	draw_string(font, _attack_center() + Vector2(-text_size.x / 2.0, text_size.y * 0.3), word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color.WHITE)

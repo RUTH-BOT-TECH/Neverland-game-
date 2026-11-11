@@ -8,9 +8,11 @@ A Godot 4.6.3 Android-first project for Eldoria. **Work in progress, not the ful
 - Phase 2: prototype player controller, gravity, jump, third-person orbit camera, touchscreen joystick, camera drag, jump button, keyboard input and an animated CC0 placeholder knight. Idle and run clips are wired; classes, customisation and final character art are not implemented.
 - Phase 3: village blockout started: timber house blockouts with textured roofs and chimneys, a textured road and ground, placeholder trees, distant hills and MultiMesh meadow decoration. One NPC, Mira the guild herald, patrols and has a short interactive introduction. Village gameplay and final art are not complete.
 - Phase 4: one data-driven local introductory quest, dialogue, ordered objectives, tracker and 25 session-only XP. This is an early quest prototype, not the full quest system.
-- Phases 5–10: not implemented. In particular there is **no multiplayer, authentication, enemies, combat, inventory, actual Orbs, persistence, Champion system, large open world or commercial release build**.
+- Phase 5: a local first-Orb encounter prototype: a stationary Cinder Warden with telegraphed attacks, player health and basic melee, and a guarded Orb of Flame at a temporary Ashen shrine blockout. This blockout is a testing shortcut, not the final Ashen Mountains region.
+- Phase 6: a session-only unique-Orb collection counter exists; equipment, general inventory and saving are not implemented.
+- Phases 7–10: not implemented. There is **no multiplayer, authentication, authoritative validation, persistence, Champion system, large open world or commercial release build**. Combat, enemy AI, Orb effects and content are prototypes, not the complete systems.
 - An update-check prototype is configured for the public GitHub repository `RUTH-BOT-TECH/Neverland-game-`. The end-to-end update flow is not yet tested. It opens a release page; Android installation still requires user action. See `docs/GITHUB_SETUP.md`.
-- The blue sphere in the test scene is a decorative test marker, not a collectible Orb.
+- The blue sphere in the village ruins is a decorative survey marker, not an Orb. The orange Orb of Flame is a separate collectible behind the local trial guardian.
 
 ## Android installation and run (for when a release ZIP is supplied)
 
@@ -24,16 +26,16 @@ Godot 4.6's documented minimum for a simple project with Compatibility is Androi
 
 ## Controls and testing
 
-- Touch: drag the bottom-left circular stick to move; drag elsewhere on the right half of the screen to orbit the camera; tap JUMP at bottom-right. Multiple fingers are supported. The character respawns if it falls below the ground.
-- Follow the quest tracker. Approach Mira on the village street, tap TALK and use Next through her final line. Closing early does not advance the quest. Go to the ruins on the eastern side of the village (to the player’s right and further along the street) and tap EXAMINE when near the glowing blue survey marker. The marker is not an Orb. A completion message and +25 session XP appear on the tracker.
-- Player movement and the NPC patrol pause during dialogue. Quest state and XP reset when the game is restarted; there is no persistence yet.
-- Keyboard (optional): WASD moves relative to the camera, arrow keys orbit, Space jumps, and E starts/advances a nearby conversation.
+- Touch: drag the bottom-left circular stick to move; drag elsewhere on the right half of the screen to orbit the camera; tap JUMP or ATTACK at bottom-right. Multiple fingers are supported. The character respawns if it falls below the ground.
+- Follow the quest tracker. Approach Mira on the village street, tap TALK and use Next through her final line. Closing early does not advance the quest. Go to the ruins on the eastern side of the village (to the player’s right and further along the street) and tap EXAMINE when near the glowing blue survey marker. The marker is not an Orb. A completion message and +25 session XP appear on the tracker. After completing that quest, follow the Flame trial hint east of the ruins to the Cinder Warden. Face the guardian and use ATTACK within range; wait for the attack cooldown. Avoid its telegraphed strike. After defeating it, approach the orange Orb and tap COLLECT. The HUD shows 1/5 Orbs.
+- Player movement and the NPC patrol pause during dialogue. On defeat, the player respawns with full health and an undefeated guardian resets. Quest state, XP, guardian state and Orb ownership reset when the game is restarted; there is no persistence yet.
+- Keyboard (optional): WASD moves relative to the camera, arrow keys orbit, Space jumps, F attacks, and E interacts with nearby people and objects.
 - Walk on the ground and onto the low stone platform near the ruins; rotate the view; jump and land. Walk into a house wall to check its collision. Run on an Android device to evaluate controls, visibility, smoothness and overheating. The four ruin pillars, step, pedestal, trees, road tiles and grass are visual-only and currently have no collision. The ground, platform and house walls have collision.
 - If the screen is black or an error occurs, check the editor Output/Debugger and record the exact message, phone model, Android version, and Godot version.
 
 ## Settings and input map
 
-`project.godot` already specifies main scene `res://scenes/world/Foundation.tscn`, Compatibility rendering on desktop/mobile, 1280×720 base viewport, canvas-items stretch, expanded aspect and landscape. No autoload scripts are registered yet. The Input Map defines `move_left` A, `move_right` D, `move_forward` W, `move_back` S, `jump` Space, `interact` E and `look_left/right/up/down` arrow keys, using physical key codes. Touch uses custom signals rather than emulating keyboard actions.
+`project.godot` already specifies main scene `res://scenes/world/Foundation.tscn`, Compatibility rendering on desktop/mobile, 1280×720 base viewport, canvas-items stretch, expanded aspect and landscape. No autoload scripts are registered yet. The Input Map defines `move_left` A, `move_right` D, `move_forward` W, `move_back` S, `jump` Space, `attack` F, `interact` E and `look_left/right/up/down` arrow keys, using physical key codes. Touch uses custom signals rather than emulating keyboard actions.
 
 ## Scene hierarchy and script connections
 
@@ -41,6 +43,7 @@ Godot 4.6's documented minimum for a simple project with Compatibility is Androi
 
 ```
 Foundation (Node3D)
+├── OrbInventory (Node; scripts/inventory/orb_inventory.gd)
 ├── QuestManager (Node; res://scripts/quests/quest_manager.gd)
 ├── WorldEnvironment (WorldEnvironment)
 ├── Sun (DirectionalLight3D)
@@ -59,6 +62,7 @@ Foundation (Node3D)
 │   ├── TestMarker (MeshInstance3D)
 │   └── Step (MeshInstance3D)
 ├── Village (instance of res://scenes/world/Village.tscn)
+├── AshenShrine (instance of res://scenes/world/AshenShrine.tscn)
 ├── VillageHerald (instance of res://scenes/characters/VillageHerald.tscn)
 ├── Player (instance of res://scenes/characters/Player.tscn)
 └── Overlay (CanvasLayer)
@@ -69,13 +73,16 @@ Foundation (Node3D)
     ├── TouchControls (Control; res://scripts/player/touch_controls.gd)
     ├── DialogueUI (instance of res://scenes/ui/DialogueUI.tscn)
     ├── QuestUI (instance of res://scenes/ui/QuestUI.tscn)
-    └── UpdateNotice (instance of res://scenes/ui/UpdateNotice.tscn)
+    ├── UpdateNotice (instance of res://scenes/ui/UpdateNotice.tscn)
+    └── FlameTrialUI (instance of res://scenes/ui/FlameTrialUI.tscn)
 ```
 
 `res://scenes/characters/Player.tscn`:
 
 ```
 Player (CharacterBody3D; res://scripts/player/player_controller.gd)
+├── Vitals (Node; scripts/player/player_vitals.gd)
+├── Combat (Node; scripts/combat/player_combat.gd)
 ├── Collision (CollisionShape3D)
 ├── Visual (Node3D)
 │   ├── Body, Belt, Head, Hair (hidden primitive MeshInstance3D placeholders)
@@ -146,9 +153,41 @@ UpdateNotice (Control; scripts/networking/update_notice.gd)
 
 The `UpdateNotice` instance uses `resources/settings/update_config.tres` (schema: `scripts/networking/update_config.gd`). Open and Later buttons are connected to `open_release_page()` and `dismiss()`. It checks public GitHub Releases at startup when enabled; this project is configured for `RUTH-BOT-TECH/Neverland-game-`. Export version/code and config's current build number must match. No in-app silent installation is implemented.
 
+`res://scenes/world/AshenShrine.tscn`:
+
+```
+AshenShrine (Node3D)
+├── AshGround (MeshInstance3D)
+├── Plinth (MeshInstance3D)
+├── Guardian (instance of scenes/bosses/CinderWarden.tscn)
+│   ├── Model (Node3D)
+│   │   └── Juggernaut (instanced GLB, includes AnimationPlayer)
+│   └── NameLabel (Label3D)
+└── FlameOrb (instance of scenes/orbs/FlameOrb.tscn)
+    └── Visual (Node3D)
+        ├── Core (MeshInstance3D)
+        ├── Ring (MeshInstance3D)
+        └── Sparks (GPUParticles3D)
+```
+
+`res://scenes/ui/FlameTrialUI.tscn`:
+
+```
+FlameTrialUI (Control; scripts/orbs/flame_trial_ui.gd)
+├── Status (PanelContainer)
+│   └── Margin (MarginContainer)
+│       └── Content (VBoxContainer)
+│           ├── HealthText (Label)
+│           ├── Health (ProgressBar)
+│           └── Info (Label)
+└── CollectButton (Button)
+```
+
+Foundation instances AshenShrine, OrbInventory and FlameTrialUI. Guardian's `scripts/ai/cinder_warden.gd` uses paths to Player and QuestManager. Orb's `scripts/orbs/flame_orb.gd` uses paths to Player, Guardian and OrbInventory and `resources/items/orb_flame.tres`; its data schema is `scripts/orbs/orb_definition.gd`. FlameTrialUI receives paths to those nodes and connects CollectButton to `collect_orb()`. TouchControls `attack_pressed` connects to Player/Combat `try_attack()`. Quest completion gates guardian damage, and guardian defeat and player proximity gate collection. OrbInventory rejects duplicate and unknown identifiers. All of these checks are local only and do not provide multiplayer security.
+
 `scenes/world/Village.tscn` has a Village (Node3D) root with `res://scripts/world/village_builder.gd` attached. At runtime the script generates its road, houses, trees, hills and three meadow MultiMesh nodes. These generated children do not appear in the editor scene tree until the scene runs.
 
-In `Foundation.tscn`, TouchControls signals `move_changed`, `look_dragged` and `jump_pressed` connect to Player methods `set_touch_move`, `look_by` and `queue_jump`. The player script excludes its own collision RID from the spring arm.
+In `Foundation.tscn`, TouchControls signals `move_changed`, `look_dragged` and `jump_pressed` connect to Player methods `set_touch_move`, `look_by` and `queue_jump`. The `attack_pressed` signal connects to Player/Combat `try_attack`. The player script excludes its own collision RID from the spring arm.
 
 ## Folder map
 
@@ -162,13 +201,13 @@ The_Five_Missing_Orbs/
 ├── autoload/
 ├── docs/
 ├── tools/patch_godot_manifest.py
-└── tests/phase2_smoke.gd, village_dialogue_smoke.gd, quest_smoke.gd, update_checker_smoke.gd
+└── tests/phase2_smoke.gd, village_dialogue_smoke.gd, quest_smoke.gd, update_checker_smoke.gd, flame_trial_smoke.gd
 ```
 
 Empty folders contain `.gitkeep` placeholders; these are not scripts. Godot may hide them in its FileSystem dock.
 
 ## Test record
 
-Godot 4.6.3 Linux: project imported and ran; automated headless smoke script checked scene loading, landing on the ground, movement, upward jump velocity, camera rotation, joystick touch and release, and that the Run animation is selected while moving. A second headless smoke test checked proximity, dialogue buttons, input lock, keyboard interaction, all lines and closing. A third headless smoke test checked ordered quest events, early dialogue close, tracker updates, proximity, keyboard interaction and single-award XP. The update-checker smoke test exercised disabled mode, version selection, unsafe URL and invalid JSON rejection, offline behavior, and notice display. A live request to an unrelated public GitHub Releases endpoint returned HTTP 200 on Linux; no actual Eldoria repository or Android update flow was tested. A desktop software-rendered screenshot was also captured. Neither test verifies physical touch devices, Android editor behavior or phone performance. Run the automated tests from a desktop command line with `godot --headless --path . --script res://tests/phase2_smoke.gd` and `godot --headless --path . --script res://tests/village_dialogue_smoke.gd`, and `godot --headless --path . --script res://tests/quest_smoke.gd`, and `godot --headless --path . --script res://tests/update_checker_smoke.gd`; no command line is required on Android to run the game normally.
+Godot 4.6.3 Linux: project imported and ran; automated headless smoke script checked scene loading, landing on the ground, movement, upward jump velocity, camera rotation, joystick touch and release, and that the Run animation is selected while moving. A second headless smoke test checked proximity, dialogue buttons, input lock, keyboard interaction, all lines and closing. A third headless smoke test checked ordered quest events, early dialogue close, tracker updates, proximity, keyboard interaction and single-award XP. The Flame trial smoke test exercised quest gating, attack direction and cooldown, guardian damage, player respawn, defeat, collection, and duplicate prevention. The update-checker smoke test exercised disabled mode, version selection, unsafe URL and invalid JSON rejection, offline behavior, and notice display. A live request to an unrelated public GitHub Releases endpoint returned HTTP 200 on Linux; no actual Eldoria repository or Android update flow was tested. A desktop software-rendered screenshot was also captured. Neither test verifies physical touch devices, Android editor behavior or phone performance. Run the automated tests from a desktop command line with `godot --headless --path . --script res://tests/phase2_smoke.gd` and `godot --headless --path . --script res://tests/village_dialogue_smoke.gd`, and `godot --headless --path . --script res://tests/quest_smoke.gd`, and `godot --headless --path . --script res://tests/update_checker_smoke.gd`, and `godot --headless --path . --script res://tests/flame_trial_smoke.gd`; no command line is required on Android to run the game normally.
 
-A separately supplied Android **debug preview APK** was exported before the quest was added; its signature was verified, but installation and runtime on a phone remain untested. That APK does not contain the quest or update checker. See `docs/TEST_BUILDS.md` for installation, update signing, and export workaround notes. The final release is not available yet.
+A separately supplied Android **debug preview APK** was exported before the quest was added; its signature was verified, but installation and runtime on a phone remain untested. That earlier APK does not contain the quest, update checker or Flame trial. GitHub Preview 2 contains the quest and update checker, but not the later Flame trial unless a newer release is published. See `docs/TEST_BUILDS.md` for installation, update signing, and export workaround notes. The final release is not available yet.

@@ -13,6 +13,7 @@ extends CharacterBody3D
 var touch_move := Vector2.ZERO
 var jump_queued := false
 var controls_enabled := true
+var attack_animation_left := 0.0
 @onready var character_animation: AnimationPlayer = $Visual/KnightModel/AnimationPlayer
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
@@ -45,6 +46,10 @@ func look_by(delta: Vector2) -> void:
 	camera_pivot.rotation.y -= delta.x * touch_look_sensitivity
 	camera_pivot.rotation.x = clampf(camera_pivot.rotation.x - delta.y * touch_look_sensitivity, deg_to_rad(-65.0), deg_to_rad(15.0))
 
+func play_attack_animation() -> void:
+	if controls_enabled:
+		attack_animation_left = 0.55
+
 func _physics_process(delta: float) -> void:
 	if global_position.y < -10.0:
 		global_position = Vector3(0, 0.1, 18)
@@ -74,6 +79,9 @@ func _physics_process(delta: float) -> void:
 		visual.rotation.y = lerp_angle(visual.rotation.y, target_angle, minf(1.0, 12.0 * delta))
 	move_and_slide()
 	# Separate animation clips supplied with the CC0 character model.
+	attack_animation_left = maxf(0.0, attack_animation_left - delta)
 	var animation_name := "Run" if is_on_floor() and Vector2(velocity.x, velocity.z).length() > 0.3 else "Idle"
+	if attack_animation_left > 0.0 and controls_enabled:
+		animation_name = "Attack"
 	if character_animation.current_animation != animation_name or not character_animation.is_playing():
 		character_animation.play(animation_name, 0.15)

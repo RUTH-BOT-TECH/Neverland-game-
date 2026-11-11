@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/bosses/CinderWarden.tscn" id="GuardianScene"]
+[ext_resource type="PackedScene" path="res://scenes/orbs/FlameOrb.tscn" id="OrbScene"]
+
+[sub_resource type="StandardMaterial3D" id="AshMat"]
+albedo_color = Color(0.22, 0.16, 0.15, 1)
+roughness = 1.0
+
+[sub_resource type="CylinderMesh" id="AshGround"]
+material = SubResource("AshMat")
+top_radius = 5.5
+bottom_radius = 5.5
+height = 0.08
+radial_segments = 24
+
+[sub_resource type="BoxMesh" id="PlinthMesh"]
+material = SubResource("AshMat")
+size = Vector3(1.8, 1.0, 1.8)
+
+[node name="AshenShrine" type="Node3D"]
+
+[node name="AshGround" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.045, 0)
+mesh = SubResource("AshGround")
+
+[node name="Plinth" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.5, -2.5)
+mesh = SubResource("PlinthMesh")
+
+[node name="Guardian" parent="." instance=ExtResource("GuardianScene")]
+player_path = NodePath("../../Player")
+quest_manager_path = NodePath("../../QuestManager")
+
+[node name="FlameOrb" parent="." instance=ExtResource("OrbScene")]
+position = Vector3(0, 1.75, -2.5)
+player_path = NodePath("../../Player")
+guardian_path = NodePath("../Guardian")
+inventory_path = NodePath("../../OrbInventory")

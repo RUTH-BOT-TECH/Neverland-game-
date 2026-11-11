@@ -1,0 +1,75 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/orbs/flame_trial_ui.gd" id="TrialScript"]
+
+[sub_resource type="StyleBoxFlat" id="StatusStyle"]
+bg_color = Color(0.055, 0.085, 0.105, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.72, 0.61, 0.39, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_left = 5
+corner_radius_bottom_right = 5
+
+[node name="FlameTrialUI" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("TrialScript")
+
+[node name="Status" type="PanelContainer" parent="."]
+anchor_left = 0.02
+anchor_top = 0.14
+anchor_right = 0.39
+anchor_bottom = 0.29
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StatusStyle")
+
+[node name="Margin" type="MarginContainer" parent="Status"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_bottom = 7
+
+[node name="Content" type="VBoxContainer" parent="Status/Margin"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HealthText" type="Label" parent="Status/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Health"
+
+[node name="Health" type="ProgressBar" parent="Status/Margin/Content"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+show_percentage = false
+
+[node name="Info" type="Label" parent="Status/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Orbs 0/5"
+autowrap_mode = 3
+
+[node name="CollectButton" type="Button" parent="."]
+visible = false
+anchor_left = 0.80
+anchor_top = 0.48
+anchor_right = 0.97
+anchor_bottom = 0.58
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "COLLECT"
+
+[connection signal="pressed" from="CollectButton" to="." method="collect_orb"]
