@@ -1,8 +1,20 @@
 extends Node3D
-## Lightweight, original blockout. Generated once on load, not every frame.
-## The visual assets are deliberately placeholders and use shared meshes/materials.
+## Village blockout assembled once at load. Includes CC0 modular art.
+## Foliage uses shared meshes and MultiMesh instances; see asset credits.
 
-const TREE_SCENE := preload("res://assets/models/gobkit/TreeMed001.glb")
+const TREE_SCENES := [
+	preload("res://assets/models/quaternius_nature/CommonTree_1.gltf"),
+	preload("res://assets/models/quaternius_nature/CommonTree_2.gltf")
+]
+const MEADOW_SCENES := [
+	preload("res://assets/models/quaternius_nature/Grass_Common_Short.gltf"),
+	preload("res://assets/models/quaternius_nature/Grass_Common_Tall.gltf"),
+	preload("res://assets/models/quaternius_nature/Flower_3_Group.gltf")
+]
+const WINDOW_SCENE := preload("res://assets/models/quaternius_village/Window_Wide_Flat1.gltf")
+const DOOR_SCENE := preload("res://assets/models/quaternius_village/Door_1_Flat.gltf")
+const GABLE_SCENE := preload("res://assets/models/quaternius_village/Roof_Front_Brick4.gltf")
+const CRATE_SCENE := preload("res://assets/models/quaternius_village/Prop_Crate.gltf")
 const ROOF_SCENE := preload("res://assets/models/quaternius_village/Roof_RoundTiles_4x4.gltf")
 const CHIMNEY_SCENE := preload("res://assets/models/quaternius_village/Prop_Chimney.gltf")
 const WOOD_TEXTURE := preload("res://assets/textures/polyhaven/brown_planks_04.jpg")
@@ -91,6 +103,15 @@ func _part(parent: Node3D, mesh_key: String, part_name: String, position: Vector
 	parent.add_child(part)
 	return part
 
+func _model(parent: Node3D, scene: PackedScene, model_name: String, pos: Vector3, rot: Vector3 = Vector3.ZERO, model_scale: Vector3 = Vector3.ONE) -> Node3D:
+	var model := scene.instantiate() as Node3D
+	model.name = model_name
+	model.position = pos
+	model.rotation_degrees = rot
+	model.scale = model_scale
+	parent.add_child(model)
+	return model
+
 func _build_path() -> void:
 	var path := Node3D.new()
 	path.name = "CobblePath"
@@ -131,11 +152,16 @@ func _build_houses() -> void:
 				for z in [-1.93, 1.93]:
 					_part(house, "post", "TimberPost", Vector3(x, 1.78, z))
 			_part(house, "beam", "FrontBeam", Vector3(0, 2.8, 2.06))
-			_part(house, "door", "Door", Vector3(0, 1.25, 2.08))
-			for x in [-1.18, 1.18]:
-				_part(house, "window", "Window", Vector3(x, 1.86, 2.08))
-				_part(house, "window_bar_v", "WindowBarV", Vector3(x, 1.86, 2.15))
-				_part(house, "window_bar_h", "WindowBarH", Vector3(x, 1.86, 2.15))
+			_model(house, DOOR_SCENE, "DetailedDoor", Vector3(-0.53, 0.24, 2.12), Vector3.ZERO, Vector3(1, 1, 1))
+			for x in [-1.2, 1.2]:
+				_model(house, WINDOW_SCENE, "FrontWindow", Vector3(x, 0.5, 2.12), Vector3.ZERO, Vector3(0.65, 0.65, 0.65))
+			for z in [-1.0, 1.0]:
+				_model(house, WINDOW_SCENE, "LeftWindow", Vector3(-2.1, 0.5, z), Vector3(0, -90, 0), Vector3(0.65, 0.65, 0.65))
+				_model(house, WINDOW_SCENE, "RightWindow", Vector3(2.1, 0.5, z), Vector3(0, 90, 0), Vector3(0.65, 0.65, 0.65))
+			_model(house, GABLE_SCENE, "GableFront", Vector3(0, 3.0, 2.02), Vector3.ZERO, Vector3(0.9, 0.75, 0.9))
+			_model(house, GABLE_SCENE, "GableBack", Vector3(0, 3.0, -2.02), Vector3(0, 180, 0), Vector3(0.9, 0.75, 0.9))
+			if row % 2 == 0:
+				_model(house, CRATE_SCENE, "Crate", Vector3(-1.7, 0, 2.65), Vector3(0, row * 35, 0), Vector3.ONE * 0.65)
 
 func _build_trees() -> void:
 	var group := Node3D.new()
@@ -143,13 +169,17 @@ func _build_trees() -> void:
 	add_child(group)
 	for side in [-1, 1]:
 		for row in range(9):
+			var tree_position := Vector3(side * (12.0 + (row % 3) * 1.0), 0, 20.0 - row * 5.6)
+			# Leave the survey platform and its approach visually unobstructed.
+			if Vector2(tree_position.x - 10.0, tree_position.z + 8.0).length() < 6.5:
+				continue
 			var tree := Node3D.new()
 			tree.name = "Tree_%s_%d" % ["West" if side == -1 else "East", row + 1]
-			tree.position = Vector3(side * (12.0 + (row % 3) * 1.0), 0, 20.0 - row * 5.6)
+			tree.position = tree_position
 			group.add_child(tree)
-			var tree_model := TREE_SCENE.instantiate() as Node3D
+			var tree_model := TREE_SCENES[row % TREE_SCENES.size()].instantiate() as Node3D
 			tree_model.name = "TreeModel"
-			tree_model.scale = Vector3.ONE * (0.008 + (row % 3) * 0.001)
+			tree_model.scale = Vector3.ONE * (0.75 + (row % 3) * 0.09)
 			tree_model.rotation_degrees.y = row * 43
 			tree.add_child(tree_model)
 
@@ -161,24 +191,30 @@ func _build_hills() -> void:
 		_part(group, "hill", "Hill_%d" % i, Vector3(-22 + i * 9, 3.5, -27.0 - (i % 2) * 4.0), Vector3(0, i * 12, 0), Vector3(1.2, 1.0 + (i % 3) * 0.3, 1.0))
 
 func _build_meadow() -> void:
-	# MultiMesh keeps hundreds of small decorative tufts in three draw batches.
+	# Shared MultiMeshes reduce draw-call overhead. Counts remain conservative;
+	# alpha overdraw and overall performance still require real-device profiling.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 5317
-	for kind in range(3):
-		var material := StandardMaterial3D.new()
-		material.albedo_color = [Color(0.20, 0.38, 0.12), Color(0.39, 0.53, 0.18), Color(0.88, 0.71, 0.21)][kind]
-		material.roughness = 1.0
-		var blade := BoxMesh.new()
-		blade.size = Vector3(0.12 if kind < 2 else 0.08, 0.42 if kind < 2 else 0.25, 0.08)
-		blade.material = material
+	var counts := [500, 180, 55]
+	for kind in range(MEADOW_SCENES.size()):
+		var temporary: Node = (MEADOW_SCENES[kind] as PackedScene).instantiate()
+		var sources: Array[Node] = temporary.find_children("*", "MeshInstance3D", true, false)
+		if sources.is_empty():
+			push_warning("Meadow model has no mesh")
+			temporary.free()
+			continue
+		var source: Mesh = (sources[0] as MeshInstance3D).mesh
 		var multi := MultiMesh.new()
 		multi.transform_format = MultiMesh.TRANSFORM_3D
-		multi.mesh = blade
+		multi.mesh = source
 		var positions: Array[Vector3] = []
-		while positions.size() < (350 if kind < 2 else 90):
+		while positions.size() < counts[kind]:
 			var x := rng.randf_range(-19.0, 19.0)
 			var z := rng.randf_range(-24.0, 24.0)
 			if absf(x) < 2.6:
+				continue
+			# Keep the survey platform and its southern entrance clear.
+			if absf(x - 10.0) < 3.5 and z > -11.5 and z < -3.5:
 				continue
 			var blocked := false
 			for row in range(4):
@@ -187,12 +223,15 @@ func _build_meadow() -> void:
 					break
 			if blocked:
 				continue
-			positions.append(Vector3(x, 0.2 if kind < 2 else 0.12, z))
+			positions.append(Vector3(x, 0.015, z))
 		multi.instance_count = positions.size()
 		for i in range(positions.size()):
-			var basis := Basis(Vector3.UP, rng.randf_range(0, TAU)).scaled(Vector3(1, rng.randf_range(0.7, 1.3), 1))
+			var size := rng.randf_range(0.23, 0.38) if kind < 2 else rng.randf_range(0.25, 0.35)
+			var basis := Basis(Vector3.UP, rng.randf_range(0, TAU)).scaled(Vector3.ONE * size)
 			multi.set_instance_transform(i, Transform3D(basis, positions[i]))
 		var grass := MultiMeshInstance3D.new()
 		grass.name = "Meadow_%d" % kind
 		grass.multimesh = multi
+		grass.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(grass)
+		temporary.free()
