@@ -1,0 +1,9 @@
+# Asset credits and licensing
+
+The project uses selected third-party assets in addition to Godot primitive meshes. All listed sources identify these assets as CC0 1.0 (public domain dedication): https://creativecommons.org/publicdomain/zero/1.0/ . Credit is not required by CC0, but is retained here for provenance.
+
+- **Quaternius — Medieval Village MegaKit, Standard free version:** `assets/models/quaternius_village/` contains the 4x4 roof and chimney models and their referenced textures. Texture images were resized to at most 1024×1024 for the prototype; original `.gltf` and `.bin` geometry are kept. The pack's `License_Standard.txt` is included. Source: https://quaternius.com/packs/medievalvillagemegakit.html ; free version from https://store.godotengine.org/asset/quaternius/medieval-village-megakit/ .
+- **Poly Haven — Brown Planks 04, Mossy Cobblestone, Leafy Grass:** the 1K diffuse JPGs are under `assets/textures/polyhaven/`. Sources: https://polyhaven.com/a/brown_planks_04 ; https://polyhaven.com/a/mossy_cobblestone ; https://polyhaven.com/a/leafy_grass .
+- **Gobkit — KnightCaptain, PeasantMilitia and TreeMed001:** `assets/models/gobkit/`. Source and license metadata: https://gobkit.com/api/free and https://gobkit.itch.io/gobkit-free-character-pack-vol-3 . `KnightCaptain.glb` and `PeasantMilitia.glb` are animated placeholders, not final character models; TreeMed001 is a stylized placeholder tree. For compatibility with Godot 4.6.3, the two character GLBs were repacked to give each sparse accessor independent buffer views; mesh, animation and image data remain unchanged.
+
+The provided reference screenshot is used only for visual direction and is not included as a game asset. All other test geometry is generated in Godot from built-in primitives. No external asset downloads are required at runtime.

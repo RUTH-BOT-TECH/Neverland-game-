@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/dialogue_data.gd" id="DialogueData"]
+
+[resource]
+script = ExtResource("DialogueData")
+speaker_name = "Mira, Guild Herald"
+lines = PackedStringArray("Welcome to Eldoria, traveller. I'm Mira, a herald of the Adventurers' Guild.", "The five legendary Orbs are missing. Without them, the kingdom's protective barriers grow weaker every day.", "King Aldric is gravely ill. The royal council has called for adventurers to recover the Orbs and restore hope.", "The first to recover all five will be named Champion of Eldoria. But some say the Orbs did not simply vanish...", "First, visit the old ruins to the east and examine the blue survey marker. It is not an Orb, but it will help you learn the land.")

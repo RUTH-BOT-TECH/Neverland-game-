@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/networking/update_config.gd" id="UpdateConfig"]
+
+[resource]
+script = ExtResource("UpdateConfig")
+enabled = true
+github_owner = "RUTH-BOT-TECH"
+github_repository = "Neverland-game-"
+current_build_number = 2

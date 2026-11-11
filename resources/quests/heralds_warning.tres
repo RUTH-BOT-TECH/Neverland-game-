@@ -1,0 +1,12 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/quest_definition.gd" id="QuestDefinition"]
+
+[resource]
+script = ExtResource("QuestDefinition")
+quest_id = &"heralds_warning"
+title = "A Herald's Warning"
+description = "Meet the guild herald and examine an old survey marker near the village ruins."
+objective_event_ids = PackedStringArray("speak_to_mira", "inspect_survey_marker")
+objective_texts = PackedStringArray("Speak with Mira, the guild herald", "Examine the blue marker at the ruins")
+reward_xp = 25

@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/dialogue_ui.gd" id="DialogueScript"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.055, 0.085, 0.105, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.72, 0.61, 0.39, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="DialogueUI" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("DialogueScript")
+
+[node name="TalkButton" type="Button" parent="."]
+visible = false
+anchor_left = 0.80
+anchor_top = 0.48
+anchor_right = 0.97
+anchor_bottom = 0.58
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "TALK"
+
+[node name="DialoguePanel" type="PanelContainer" parent="."]
+visible = false
+anchor_left = 0.23
+anchor_top = 0.58
+anchor_right = 0.77
+anchor_bottom = 0.91
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Margin" type="MarginContainer" parent="DialoguePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="Contents" type="VBoxContainer" parent="DialoguePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Speaker" type="Label" parent="DialoguePanel/Margin/Contents"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.8, 0.48, 1)
+theme_override_font_sizes/font_size = 23
+text = "Villager"
+
+[node name="Line" type="Label" parent="DialoguePanel/Margin/Contents"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 19
+text = "Dialogue"
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="DialoguePanel/Margin/Contents"]
+layout_mode = 2
+alignment = 2
+
+[node name="CloseButton" type="Button" parent="DialoguePanel/Margin/Contents/Buttons"]
+custom_minimum_size = Vector2(105, 44)
+layout_mode = 2
+text = "Close"
+
+[node name="NextButton" type="Button" parent="DialoguePanel/Margin/Contents/Buttons"]
+custom_minimum_size = Vector2(105, 44)
+layout_mode = 2
+text = "Next"
+
+[connection signal="pressed" from="TalkButton" to="." method="open_dialogue"]
+[connection signal="pressed" from="DialoguePanel/Margin/Contents/Buttons/CloseButton" to="." method="close_dialogue"]
+[connection signal="pressed" from="DialoguePanel/Margin/Contents/Buttons/NextButton" to="." method="advance_dialogue"]

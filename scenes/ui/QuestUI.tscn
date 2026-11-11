@@ -1,0 +1,73 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/quest_ui.gd" id="QuestUI"]
+
+[sub_resource type="StyleBoxFlat" id="TrackerStyle"]
+bg_color = Color(0.055, 0.085, 0.105, 0.86)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.72, 0.61, 0.39, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="QuestUI" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("QuestUI")
+
+[node name="Tracker" type="PanelContainer" parent="."]
+anchor_left = 0.69
+anchor_top = 0.035
+anchor_right = 0.98
+anchor_bottom = 0.18
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("TrackerStyle")
+
+[node name="Margin" type="MarginContainer" parent="Tracker"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="VBoxContainer" parent="Tracker/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="Tracker/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.8, 0.48, 1)
+theme_override_font_sizes/font_size = 21
+text = "Quest"
+autowrap_mode = 3
+
+[node name="Objective" type="Label" parent="Tracker/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "Objective"
+autowrap_mode = 3
+
+[node name="ExamineButton" type="Button" parent="."]
+visible = false
+anchor_left = 0.80
+anchor_top = 0.48
+anchor_right = 0.97
+anchor_bottom = 0.58
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "EXAMINE"
+
+[connection signal="pressed" from="ExamineButton" to="." method="examine_marker"]
