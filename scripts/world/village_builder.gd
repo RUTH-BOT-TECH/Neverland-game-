@@ -17,6 +17,9 @@ const GABLE_SCENE := preload("res://assets/models/quaternius_village/Roof_Front_
 const CRATE_SCENE := preload("res://assets/models/quaternius_village/Prop_Crate.gltf")
 const ROOF_SCENE := preload("res://assets/models/quaternius_village/Roof_RoundTiles_4x4.gltf")
 const CHIMNEY_SCENE := preload("res://assets/models/quaternius_village/Prop_Chimney.gltf")
+const WAGON_SCENE := preload("res://assets/models/quaternius_village/Prop_Wagon.gltf")
+const VINE_SCENES := [preload("res://assets/models/quaternius_village/Prop_Vine1.gltf"), preload("res://assets/models/quaternius_village/Prop_Vine2.gltf")]
+const BANNER_TEXTURE := preload("res://assets/textures/eldoria/royal_banner.png")
 const WOOD_TEXTURE := preload("res://assets/textures/polyhaven/brown_planks_04.jpg")
 const ROAD_TEXTURE := preload("res://assets/textures/polyhaven/mossy_cobblestone.jpg")
 
@@ -27,6 +30,7 @@ func _ready() -> void:
 	_setup_assets()
 	_build_path()
 	_build_houses()
+	_build_landmarks()
 	_build_trees()
 	_build_hills()
 	_build_meadow()
@@ -85,13 +89,6 @@ func _setup_assets() -> void:
 		foliage.rings = 4
 		foliage.material = materials[key]
 		meshes[key] = foliage
-	var hill := CylinderMesh.new()
-	hill.top_radius = 0.0
-	hill.bottom_radius = 6.0
-	hill.height = 8.0
-	hill.radial_segments = 7
-	hill.material = materials["mountain"]
-	meshes["hill"] = hill
 
 func _part(parent: Node3D, mesh_key: String, part_name: String, position: Vector3, rotation: Vector3 = Vector3.ZERO, part_scale: Vector3 = Vector3.ONE) -> MeshInstance3D:
 	var part := MeshInstance3D.new()
@@ -160,6 +157,8 @@ func _build_houses() -> void:
 				_model(house, WINDOW_SCENE, "RightWindow", Vector3(2.1, 0.5, z), Vector3(0, 90, 0), Vector3(0.65, 0.65, 0.65))
 			_model(house, GABLE_SCENE, "GableFront", Vector3(0, 3.0, 2.02), Vector3.ZERO, Vector3(0.9, 0.75, 0.9))
 			_model(house, GABLE_SCENE, "GableBack", Vector3(0, 3.0, -2.02), Vector3(0, 180, 0), Vector3(0.9, 0.75, 0.9))
+			if row % 2 == 1:
+				_model(house, VINE_SCENES[(row + (1 if side == 1 else 0)) % 2], "ClimbingVine", Vector3(1.75, 2.95, 2.15), Vector3.ZERO, Vector3.ONE * 0.8)
 			if row % 2 == 0:
 				_model(house, CRATE_SCENE, "Crate", Vector3(-1.7, 0, 2.65), Vector3(0, row * 35, 0), Vector3.ONE * 0.65)
 
@@ -183,12 +182,114 @@ func _build_trees() -> void:
 			tree_model.rotation_degrees.y = row * 43
 			tree.add_child(tree_model)
 
+func _build_landmarks() -> void:
+	# Decorative wayfinding and a royal crest: the five empty settings refer
+	# to the lost Orbs. These props do not block player movement.
+	var group := Node3D.new()
+	group.name = "VillageLandmarks"
+	add_child(group)
+	var banner_material := StandardMaterial3D.new()
+	banner_material.albedo_texture = BANNER_TEXTURE
+	banner_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	banner_material.alpha_scissor_threshold = 0.5
+	banner_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	banner_material.roughness = 1.0
+	var cloth := QuadMesh.new()
+	cloth.size = Vector2(0.95, 1.43)
+	cloth.material = banner_material
+	var pole_mesh := CylinderMesh.new()
+	pole_mesh.top_radius = 0.055
+	pole_mesh.bottom_radius = 0.075
+	pole_mesh.height = 3.8
+	pole_mesh.radial_segments = 8
+	pole_mesh.material = materials["timber"]
+	for side in [-1, 1]:
+		var pole := MeshInstance3D.new()
+		pole.name = "BannerPole"
+		pole.mesh = pole_mesh
+		pole.position = Vector3(side * 3.25, 1.9, 3.0)
+		group.add_child(pole)
+		var flag := MeshInstance3D.new()
+		flag.name = "EldorianBannerWest" if side == -1 else "EldorianBannerEast"
+		flag.mesh = cloth
+		flag.position = Vector3(side * 3.25 - side * 0.5, 2.95, 3.02)
+		group.add_child(flag)
+	_model(group, WAGON_SCENE, "VillageWagon", Vector3(-10.2, 0, 5.8), Vector3(0, 25, 0), Vector3.ONE * 0.75)
+	var post := MeshInstance3D.new()
+	post.name = "Waypost"
+	post.mesh = pole_mesh
+	post.position = Vector3(3.25, 1.1, -2.2)
+	post.scale.y = 0.58
+	group.add_child(post)
+	var board_mesh := BoxMesh.new()
+	board_mesh.size = Vector3(1.75, 0.35, 0.12)
+	board_mesh.material = materials["timber"]
+	for i in range(2):
+		var board := MeshInstance3D.new()
+		board.name = "DirectionBoard%d" % i
+		board.mesh = board_mesh
+		board.position = Vector3(3.6, 2.02 - i * 0.42, -2.18)
+		group.add_child(board)
+		var label := Label3D.new()
+		label.name = "DirectionText%d" % i
+		label.text = ["RUINS  >", "TRIAL GROUNDS  >"][i]
+		label.font_size = 40
+		label.pixel_size = 0.0038
+		label.modulate = Color(1.0, 0.86, 0.58)
+		label.outline_size = 0
+		label.position = board.position + Vector3(0, 0, 0.065)
+		group.add_child(label)
+
 func _build_hills() -> void:
+	# Original, low-poly backdrop only: the playable ground still ends at its
+	# existing bounds. Faceted ridge replaces the six obvious cone placeholders.
 	var group := Node3D.new()
 	group.name = "DistantHills"
 	add_child(group)
-	for i in range(6):
-		_part(group, "hill", "Hill_%d" % i, Vector3(-22 + i * 9, 3.5, -27.0 - (i % 2) * 4.0), Vector3(0, i * 12, 0), Vector3(1.2, 1.0 + (i % 3) * 0.3, 1.0))
+	var rock := StandardMaterial3D.new()
+	rock.vertex_color_use_as_albedo = true
+	rock.roughness = 1.0
+	rock.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var surface := SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var depths := [-32.0, -39.0, -48.0, -60.0]
+	var strengths := [0.0, 0.60, 1.0, 0.12]
+	var points: Array = []
+	for row in range(depths.size()):
+		var line: Array[Vector3] = []
+		for i in range(31):
+			var x := -60.0 + i * 4.0
+			var peak := 3.0
+			for center in [-48.0, -25.0, -3.0, 18.0, 40.0, 57.0]:
+				peak += 11.0 * exp(-pow((x - center) / 7.0, 2))
+			var rough := sin(x * 1.7 + row * 3.0) * 0.8 + cos(x * 0.7 + row) * 0.6
+			line.append(Vector3(x, -1.0 + strengths[row] * (peak + rough), depths[row]))
+		points.append(line)
+	for row in range(depths.size() - 1):
+		for i in range(30):
+			var a: Vector3 = points[row][i]
+			var b: Vector3 = points[row][i + 1]
+			var c: Vector3 = points[row + 1][i]
+			var d: Vector3 = points[row + 1][i + 1]
+			_rock_triangle(surface, a, c, b, row, i)
+			_rock_triangle(surface, b, c, d, row, i + 9)
+	var backdrop := MeshInstance3D.new()
+	backdrop.name = "RockyRidge"
+	backdrop.mesh = surface.commit()
+	backdrop.material_override = rock
+	backdrop.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	group.add_child(backdrop)
+
+func _rock_triangle(surface: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, row: int, index: int) -> void:
+	var normal := (b - a).cross(c - a).normalized()
+	if normal.y < 0.0:
+		normal = -normal
+	var shade := 0.77 + 0.10 * sin(float(index * 19 + row * 31))
+	var color := Color(0.60 * shade, 0.58 * shade, 0.49 * shade)
+	for vertex in [a, b, c]:
+		surface.set_normal(normal)
+		surface.set_color(color)
+		surface.add_vertex(vertex)
 
 func _build_meadow() -> void:
 	# Shared MultiMeshes reduce draw-call overhead. Counts remain conservative;

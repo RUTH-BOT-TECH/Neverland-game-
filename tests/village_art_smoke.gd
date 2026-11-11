@@ -14,6 +14,15 @@ func run_checks() -> void:
 		assert(house.get_node_or_null("GableFront") != null)
 		assert(house.get_node_or_null("GableBack") != null)
 		assert(not house.find_children("*", "CollisionShape3D", false, false).is_empty())
+	var landmarks := village.get_node("VillageLandmarks")
+	assert(landmarks.get_node_or_null("VillageWagon") != null)
+	assert(landmarks.find_children("EldorianBanner*", "MeshInstance3D", false, false).size() == 2)
+	var directions := landmarks.find_children("DirectionText*", "Label3D", false, false)
+	assert(directions.size() == 2)
+	assert(directions[0].text == "RUINS  >" and directions[1].text == "TRIAL GROUNDS  >")
+	assert(landmarks.find_children("*", "CollisionShape3D", true, false).is_empty())
+	var ridge := village.get_node("DistantHills/RockyRidge") as MeshInstance3D
+	assert(ridge.mesh != null and ridge.mesh.get_surface_count() == 1)
 	for tree in village.get_node("Trees").get_children():
 		assert(Vector2(tree.position.x - 10.0, tree.position.z + 8.0).length() >= 6.5)
 	for kind in range(3):
