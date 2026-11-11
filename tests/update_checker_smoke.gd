@@ -22,6 +22,7 @@ func run_test() -> void:
 	var test_update_config = world.get_node("Overlay/UpdateNotice").config.duplicate()
 	test_update_config.enabled = false
 	world.get_node("Overlay/UpdateNotice").config = test_update_config
+	world.get_node("LocalSaveManager").enabled = false # Isolate gameplay tests from real local saves.
 	root.add_child(world)
 	var checker = world.get_node("Overlay/UpdateNotice")
 	await process_frame

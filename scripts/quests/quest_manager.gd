@@ -1,5 +1,5 @@
 extends Node
-## Local, session-only quest prototype. Not authoritative and not saved.
+## Local quest prototype. Saves are untrusted and never multiplayer-authoritative.
 ## Later multiplayer implementation must validate and persist events on the server.
 signal quest_changed
 signal quest_completed(quest_id: StringName, xp_granted: int)

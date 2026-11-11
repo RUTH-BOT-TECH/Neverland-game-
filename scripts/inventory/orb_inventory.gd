@@ -1,5 +1,5 @@
 extends Node
-## Session-only orb ownership. Not saved or protected against client tampering.
+## Local orb ownership; local saves are not protected against client tampering.
 signal orb_added(orb_id: StringName)
 
 const KNOWN_ORBS := [&"orb_flame", &"orb_tides", &"orb_nature", &"orb_storms", &"orb_eternity"]

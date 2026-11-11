@@ -1,5 +1,5 @@
 extends Control
-## Session-only encounter UI; inventory is not persistent or multiplayer-safe.
+## Local encounter UI. The local save is not multiplayer-safe.
 @export var player_path: NodePath
 @export var guardian_path: NodePath
 @export var quest_manager_path: NodePath

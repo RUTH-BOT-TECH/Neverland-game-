@@ -37,3 +37,8 @@ func try_collect() -> bool:
 	tween.tween_callback(visual.hide)
 	collected.emit(definition.orb_id)
 	return true
+
+func restore_collected() -> void:
+	# Inventory ownership is restored separately by the local save manager.
+	is_collected = true
+	visual.hide()

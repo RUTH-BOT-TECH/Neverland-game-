@@ -3,7 +3,7 @@ extends Control
 @export var player_path: NodePath
 @export var quest_manager_path: NodePath
 @export var survey_marker_path: NodePath
-@export_range(1.0, 10.0, 0.1) var interaction_distance := 3.0
+@export_range(1.0, 10.0, 0.1) var interaction_distance := 3.7
 
 @onready var player = get_node(player_path)
 @onready var quest_manager = get_node(quest_manager_path)
@@ -24,7 +24,7 @@ func _refresh_tracker() -> void:
 		return
 	title.text = quest_manager.quest.title
 	if quest_manager.status == quest_manager.QuestStatus.COMPLETED:
-		objective.text = "Completed  •  +%d XP (session only)" % quest_manager.quest.reward_xp
+		objective.text = "Completed  •  +%d XP (local)" % quest_manager.quest.reward_xp
 	elif quest_manager.status == quest_manager.QuestStatus.ACTIVE:
 		objective.text = quest_manager.quest.objective_texts[quest_manager.objective_index]
 	else:

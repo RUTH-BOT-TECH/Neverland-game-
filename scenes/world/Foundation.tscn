@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3]
+[gd_scene load_steps=32 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/characters/Player.tscn" id="PlayerScene"]
 [ext_resource type="Script" path="res://scripts/player/touch_controls.gd" id="TouchScript"]
@@ -13,6 +13,10 @@
 [ext_resource type="Script" path="res://scripts/inventory/orb_inventory.gd" id="InventoryScript"]
 [ext_resource type="Script" path="res://scripts/quests/quest_manager.gd" id="QuestManagerScript"]
 [ext_resource type="Resource" path="res://resources/quests/heralds_warning.tres" id="QuestData"]
+[ext_resource type="Script" path="res://scripts/progression/local_save_manager.gd" id="SaveScript"]
+[ext_resource type="Script" path="res://scripts/world/ruins_art.gd" id="RuinsArt"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/rock_wall_08_diff.jpg" id="RockColor"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/rock_wall_08_nor_gl.jpg" id="RockNormal"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial"]
 sky_top_color = Color(0.18, 0.40, 0.70, 1)
@@ -44,7 +48,12 @@ size = Vector3(70, 0.4, 70)
 size = Vector3(70, 0.4, 70)
 
 [sub_resource type="StandardMaterial3D" id="Material_stone"]
-albedo_color = Color(0.48, 0.46, 0.4, 1)
+albedo_color = Color(0.8, 0.84, 0.78, 1)
+albedo_texture = ExtResource("RockColor")
+normal_enabled = true
+normal_scale = 0.55
+normal_texture = ExtResource("RockNormal")
+uv1_triplanar = true
 roughness = 1.0
 
 [sub_resource type="BoxMesh" id="Mesh_platform"]
@@ -108,7 +117,7 @@ mesh = SubResource("Mesh_ground")
 shape = SubResource("Shape_ground")
 
 [node name="Platform" type="StaticBody3D" parent="."]
-position = Vector3(10, 0.25, -8)
+position = Vector3(12, 0.25, -8)
 
 [node name="Mesh" type="MeshInstance3D" parent="Platform"]
 mesh = SubResource("Mesh_platform")
@@ -117,21 +126,25 @@ mesh = SubResource("Mesh_platform")
 shape = SubResource("Shape_platform")
 
 [node name="Ruins" type="Node3D" parent="."]
-position = Vector3(10, 0, -8)
+position = Vector3(12, 0, -8)
 
 [node name="PillarNorthWest" type="MeshInstance3D" parent="Ruins"]
+visible = false
 position = Vector3(-2.5, 2, -2.5)
 mesh = SubResource("Mesh_pillar")
 
 [node name="PillarNorthEast" type="MeshInstance3D" parent="Ruins"]
+visible = false
 position = Vector3(2.5, 2, -2.5)
 mesh = SubResource("Mesh_pillar")
 
 [node name="PillarSouthWest" type="MeshInstance3D" parent="Ruins"]
+visible = false
 position = Vector3(-2.5, 2, 2.5)
 mesh = SubResource("Mesh_pillar")
 
 [node name="PillarSouthEast" type="MeshInstance3D" parent="Ruins"]
+visible = false
 position = Vector3(2.5, 2, 2.5)
 mesh = SubResource("Mesh_pillar")
 
@@ -146,6 +159,17 @@ mesh = SubResource("Mesh_marker")
 [node name="Step" type="MeshInstance3D" parent="Ruins"]
 position = Vector3(0, 0.11, 3.55)
 mesh = SubResource("Mesh_steps")
+
+[node name="RuinDetails" type="Node3D" parent="Ruins"]
+script = ExtResource("RuinsArt")
+
+[node name="MarkerLabel" type="Label3D" parent="Ruins"]
+position = Vector3(0, 2.7, 0)
+text = "SURVEY MARKER"
+font_size = 32
+pixel_size = 0.004
+billboard = 1
+outline_size = 6
 
 [node name="Village" parent="." instance=ExtResource("VillageScene")]
 
@@ -219,6 +243,31 @@ guardian_path = NodePath("../../AshenShrine/Guardian")
 quest_manager_path = NodePath("../../QuestManager")
 orb_path = NodePath("../../AshenShrine/FlameOrb")
 inventory_path = NodePath("../../OrbInventory")
+
+[node name="SaveWarning" type="Label" parent="Overlay"]
+visible = false
+anchors_preset = 12
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 280.0
+offset_top = -92.0
+offset_right = 1000.0
+offset_bottom = -42.0
+theme_override_colors/font_color = Color(1, 0.81, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0.12, 0.08, 0.05, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+autowrap_mode = 2
+mouse_filter = 2
+
+[node name="LocalSaveManager" type="Node" parent="."]
+script = ExtResource("SaveScript")
+quest_manager_path = NodePath("../QuestManager")
+inventory_path = NodePath("../OrbInventory")
+guardian_path = NodePath("../AshenShrine/Guardian")
+orb_path = NodePath("../AshenShrine/FlameOrb")
+warning_label_path = NodePath("../Overlay/SaveWarning")
 
 [connection signal="attack_pressed" from="Overlay/TouchControls" to="Player/Combat" method="try_attack"]
 [connection signal="dialogue_finished" from="Overlay/DialogueUI" to="QuestManager" method="on_herald_dialogue_finished"]

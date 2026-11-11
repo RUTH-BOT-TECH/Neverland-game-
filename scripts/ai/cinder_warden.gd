@@ -38,14 +38,23 @@ func take_damage(amount: int) -> void:
 	health = maxi(0, health - amount)
 	health_changed.emit(health, max_health)
 	if health == 0:
-		defeated = true
-		windup_left = 0.0
-		name_label.text = "Cinder Warden defeated"
-		if animation.has_animation("Death"):
-			animation.play("Death")
+		_set_defeated_visuals()
 		guardian_defeated.emit()
 	else:
 		_update_label()
+
+func _set_defeated_visuals() -> void:
+	defeated = true
+	health = 0
+	windup_left = 0.0
+	cooldown_left = 0.0
+	name_label.text = "Cinder Warden defeated"
+	if animation.has_animation("Death"):
+		animation.play("Death")
+
+func restore_defeated() -> void:
+	# Restore presentation without emitting a new reward/defeat event.
+	_set_defeated_visuals()
 
 func _update_label() -> void:
 	name_label.text = "Cinder Warden  %d/%d" % [health, max_health]

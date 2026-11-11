@@ -170,7 +170,7 @@ func _build_trees() -> void:
 		for row in range(9):
 			var tree_position := Vector3(side * (12.0 + (row % 3) * 1.0), 0, 20.0 - row * 5.6)
 			# Leave the survey platform and its approach visually unobstructed.
-			if Vector2(tree_position.x - 10.0, tree_position.z + 8.0).length() < 6.5:
+			if Vector2(tree_position.x - 12.0, tree_position.z + 8.0).length() < 6.5:
 				continue
 			var tree := Node3D.new()
 			tree.name = "Tree_%s_%d" % ["West" if side == -1 else "East", row + 1]
@@ -315,7 +315,7 @@ func _build_meadow() -> void:
 			if absf(x) < 2.6:
 				continue
 			# Keep the survey platform and its southern entrance clear.
-			if absf(x - 10.0) < 3.5 and z > -11.5 and z < -3.5:
+			if absf(x - 12.0) < 3.5 and z > -11.5 and z < -3.5:
 				continue
 			var blocked := false
 			for row in range(4):
