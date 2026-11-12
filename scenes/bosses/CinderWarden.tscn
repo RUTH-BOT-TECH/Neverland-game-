@@ -1,7 +1,31 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/ai/cinder_warden.gd" id="WardenScript"]
 [ext_resource type="PackedScene" path="res://assets/models/gobkit/BloodironJuggernaut.glb" id="WardenModel"]
+
+[sub_resource type="StandardMaterial3D" id="WarningFillMaterial"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.13, 0.015, 0.27)
+roughness = 1.0
+
+[sub_resource type="CylinderMesh" id="WarningFillMesh"]
+material = SubResource("WarningFillMaterial")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.01
+radial_segments = 48
+
+[sub_resource type="StandardMaterial3D" id="WarningEdgeMaterial"]
+shading_mode = 0
+albedo_color = Color(1, 0.28, 0.025, 1)
+
+[sub_resource type="TorusMesh" id="WarningEdgeMesh"]
+material = SubResource("WarningEdgeMaterial")
+inner_radius = 0.965
+outer_radius = 1.0
+rings = 48
+ring_segments = 6
 
 [node name="Guardian" type="Node3D"]
 script = ExtResource("WardenScript")
@@ -18,3 +42,15 @@ font_size = 38
 outline_size = 8
 billboard = 1
 pixel_size = 0.006
+
+[node name="AttackWarning" type="Node3D" parent="."]
+visible = false
+position = Vector3(0, 0.105, 0)
+
+[node name="Fill" type="MeshInstance3D" parent="AttackWarning"]
+cast_shadow = 0
+mesh = SubResource("WarningFillMesh")
+
+[node name="Edge" type="MeshInstance3D" parent="AttackWarning"]
+cast_shadow = 0
+mesh = SubResource("WarningEdgeMesh")
