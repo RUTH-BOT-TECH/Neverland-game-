@@ -1,0 +1,73 @@
+{
+  "name": "Eldoria_Adventurer",
+  "seed": 1,
+  "gender": 1,
+  "age": 0.52,
+  "muscle": 0.62,
+  "weight": 0.47,
+  "height": 0.52,
+  "proportions": 0.7,
+  "african": 0.65,
+  "asian": 0.05,
+  "caucasian": 0.3,
+  "breastSize": 0.5,
+  "breastFirmness": 0.5,
+  "modifiers": {},
+  "skin": "auto",
+  "skinTint": "#ffffff",
+  "eyes": "brownlight",
+  "eyebrows": "eyebrow001",
+  "eyelashes": "eyelashes01",
+  "hair": "short02",
+  "hairTint": "#ffffff",
+  "hairColor": "#251a12",
+  "facialHair": "none",
+  "beardColor": "#241a13",
+  "tattoos": [],
+  "tattooInk": "#1c2128",
+  "earrings": "none",
+  "earringMetal": "gold",
+  "outfit": "none",
+  "top": "long_tunic",
+  "jacket": "none",
+  "bottom": "trousers",
+  "underwear": true,
+  "accessories": [
+    "leather_armor",
+    "belt",
+    "crossed_straps"
+  ],
+  "garmentStyles": {
+    "long_tunic": {
+      "pattern": "solid",
+      "color": "#263e58"
+    },
+    "trousers": {
+      "pattern": "solid",
+      "color": "#44392f"
+    }
+  },
+  "shoes": "combat_boots",
+  "hat": "none",
+  "outfitTint": "#ffffff",
+  "detail": "low",
+  "rig": "game",
+  "faceBones": false,
+  "restPose": "A",
+  "animations": true,
+  "weapon": "sword",
+  "carry": "none",
+  "vehicle": "none",
+  "vehicleStyle": {
+    "color": "#8a5535",
+    "accentColor": "#c7b293",
+    "seatColor": "#292827",
+    "finish": "satin",
+    "variant": "classic"
+  },
+  "expression": "neutral",
+  "faceShapes": false,
+  "speechShapes": false,
+  "teeth": "none",
+  "tongue": false
+}

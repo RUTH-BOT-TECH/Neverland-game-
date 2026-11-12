@@ -48,7 +48,7 @@ func look_by(delta: Vector2) -> void:
 
 func play_attack_animation() -> void:
 	if controls_enabled:
-		attack_animation_left = 0.55
+		attack_animation_left = 0.74
 
 func _physics_process(delta: float) -> void:
 	if global_position.y < -10.0:
@@ -82,6 +82,8 @@ func _physics_process(delta: float) -> void:
 	attack_animation_left = maxf(0.0, attack_animation_left - delta)
 	var animation_name := "Run" if is_on_floor() and Vector2(velocity.x, velocity.z).length() > 0.3 else "Idle"
 	if attack_animation_left > 0.0 and controls_enabled:
-		animation_name = "Attack"
+		animation_name = "Sword slash"
+	# Fit the one-second sword clip within the existing 0.75s combat cooldown.
+	character_animation.speed_scale = 1.35 if animation_name == "Sword slash" else 1.0
 	if character_animation.current_animation != animation_name or not character_animation.is_playing():
 		character_animation.play(animation_name, 0.15)

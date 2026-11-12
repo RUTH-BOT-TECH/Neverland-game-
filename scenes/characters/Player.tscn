@@ -1,7 +1,7 @@
 [gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_player"]
-[ext_resource type="PackedScene" path="res://assets/models/gobkit/KnightCaptain.glb" id="KnightModel"]
+[ext_resource type="PackedScene" path="res://assets/models/eldoria_adventurer/Adventurer.glb" id="KnightModel"]
 [ext_resource type="Script" path="res://scripts/player/player_vitals.gd" id="VitalsScript"]
 [ext_resource type="Script" path="res://scripts/combat/player_combat.gd" id="CombatScript"]
 
@@ -154,7 +154,6 @@ mesh = SubResource("Mesh_hilt")
 
 [node name="KnightModel" parent="Visual" instance=ExtResource("KnightModel")]
 rotation_degrees = Vector3(0, 180, 0)
-scale = Vector3(8, 8, 8)
 
 [node name="CameraPivot" type="Node3D" parent="."]
 position = Vector3(0, 1.45, 0)

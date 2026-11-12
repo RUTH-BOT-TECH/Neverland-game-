@@ -1,0 +1,71 @@
+{
+  "name": "Eldoria_Mira",
+  "seed": 1,
+  "gender": 0,
+  "age": 0.55,
+  "muscle": 0.4,
+  "weight": 0.44,
+  "height": 0.46,
+  "proportions": 0.7,
+  "african": 0.72,
+  "asian": 0.08,
+  "caucasian": 0.2,
+  "breastSize": 0.5,
+  "breastFirmness": 0.5,
+  "modifiers": {},
+  "skin": "auto",
+  "skinTint": "#ffffff",
+  "eyes": "brownlight",
+  "eyebrows": "eyebrow001",
+  "eyelashes": "eyelashes01",
+  "hair": "braid01",
+  "hairTint": "#ffffff",
+  "hairColor": "#271a14",
+  "facialHair": "none",
+  "beardColor": "#241a13",
+  "tattoos": [],
+  "tattooInk": "#1c2128",
+  "earrings": "none",
+  "earringMetal": "gold",
+  "outfit": "none",
+  "top": "long_tunic",
+  "jacket": "none",
+  "bottom": "trousers",
+  "underwear": true,
+  "accessories": [
+    "belt"
+  ],
+  "garmentStyles": {
+    "long_tunic": {
+      "pattern": "solid",
+      "color": "#967754"
+    },
+    "trousers": {
+      "pattern": "solid",
+      "color": "#504237"
+    }
+  },
+  "shoes": "combat_boots",
+  "hat": "none",
+  "outfitTint": "#ffffff",
+  "detail": "low",
+  "rig": "game",
+  "faceBones": false,
+  "restPose": "A",
+  "animations": true,
+  "weapon": "none",
+  "carry": "none",
+  "vehicle": "none",
+  "vehicleStyle": {
+    "color": "#8a5535",
+    "accentColor": "#c7b293",
+    "seatColor": "#292827",
+    "finish": "satin",
+    "variant": "classic"
+  },
+  "expression": "neutral",
+  "faceShapes": false,
+  "speechShapes": false,
+  "teeth": "none",
+  "tongue": false
+}
