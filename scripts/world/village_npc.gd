@@ -1,6 +1,13 @@
 extends Node3D
 ## Local village NPC. Patrol and dialogue are prototypes, not network-authoritative.
 @export var dialogue: Resource
+@export var survey_dialogue: Resource
+@export var trial_dialogue: Resource
+@export var guardian_defeated_dialogue: Resource
+@export var flame_recovered_dialogue: Resource
+@export var quest_manager_path: NodePath
+@export var guardian_path: NodePath
+@export var inventory_path: NodePath
 @export_range(0.0, 3.0, 0.1) var patrol_radius: float = 0.8
 
 @onready var label: Label3D = $NameLabel
@@ -20,6 +27,22 @@ func _ready() -> void:
 		if animation_player.has_animation(clip):
 			animation_player.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
 	_set_animation("Idle")
+
+func current_dialogue() -> Resource:
+	# Conversation is chosen from current local progress, never authoritative.
+	# Missing dependencies/resources gracefully fall back to the opening dialogue.
+	var inventory = get_node_or_null(inventory_path) if not inventory_path.is_empty() else null
+	var guardian = get_node_or_null(guardian_path) if not guardian_path.is_empty() else null
+	var quest = get_node_or_null(quest_manager_path) if not quest_manager_path.is_empty() else null
+	if inventory != null and inventory.has_orb(&"orb_flame") and flame_recovered_dialogue != null:
+		return flame_recovered_dialogue
+	if guardian != null and guardian.defeated and guardian_defeated_dialogue != null:
+		return guardian_defeated_dialogue
+	if quest != null and quest.status == quest.QuestStatus.COMPLETED and trial_dialogue != null:
+		return trial_dialogue
+	if quest != null and quest.is_expecting("inspect_survey_marker") and survey_dialogue != null:
+		return survey_dialogue
+	return dialogue
 
 func set_talking(value: bool) -> void:
 	_talking = value

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/dialogue_data.gd" id="DialogueData"]
+
+[resource]
+script = ExtResource("DialogueData")
+speaker_name = "Mira, Guild Herald"
+lines = PackedStringArray("The old ruins lie east of the village, beyond the houses.", "Look for the blue survey crystal. It is a marker, not one of the missing Orbs.")

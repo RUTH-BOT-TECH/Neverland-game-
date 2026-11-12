@@ -177,6 +177,9 @@ outline_size = 6
 position = Vector3(22, 0, -8)
 
 [node name="VillageHerald" parent="." instance=ExtResource("HeraldScene")]
+quest_manager_path = NodePath("../QuestManager")
+guardian_path = NodePath("../AshenShrine/Guardian")
+inventory_path = NodePath("../OrbInventory")
 position = Vector3(1.6, 0, 12.5)
 
 [node name="Player" parent="." instance=ExtResource("PlayerScene")]

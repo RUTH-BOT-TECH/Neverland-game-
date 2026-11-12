@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/dialogue_data.gd" id="DialogueData"]
+
+[resource]
+script = ExtResource("DialogueData")
+speaker_name = "Mira, Guild Herald"
+lines = PackedStringArray("You've found the survey marker. The old stones show a path farther east.", "The Flame shrine lies beyond the ruins. Its guardian won't yield the Orb easily.", "Watch for the warning on the ground and move clear before it strikes. Then recover the Orb and return to me.")

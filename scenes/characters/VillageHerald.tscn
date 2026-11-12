@@ -1,12 +1,21 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/village_npc.gd" id="NPCScript"]
 [ext_resource type="PackedScene" path="res://assets/models/eldoria_adventurer/Mira.glb" id="ModelScene"]
 [ext_resource type="Resource" path="res://resources/dialogue/village_herald.tres" id="Dialogue"]
 
+[ext_resource type="Resource" path="res://resources/dialogue/mira_survey.tres" id="SurveyDialogue"]
+[ext_resource type="Resource" path="res://resources/dialogue/mira_trial.tres" id="TrialDialogue"]
+[ext_resource type="Resource" path="res://resources/dialogue/mira_warden_defeated.tres" id="WardenDialogue"]
+[ext_resource type="Resource" path="res://resources/dialogue/mira_flame_recovered.tres" id="FlameDialogue"]
+
 [node name="VillageHerald" type="Node3D"]
 script = ExtResource("NPCScript")
 dialogue = ExtResource("Dialogue")
+survey_dialogue = ExtResource("SurveyDialogue")
+trial_dialogue = ExtResource("TrialDialogue")
+guardian_defeated_dialogue = ExtResource("WardenDialogue")
+flame_recovered_dialogue = ExtResource("FlameDialogue")
 
 [node name="Model" type="Node3D" parent="."]
 

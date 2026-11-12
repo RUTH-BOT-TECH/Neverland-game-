@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/dialogue_data.gd" id="DialogueData"]
+
+[resource]
+script = ExtResource("DialogueData")
+speaker_name = "Mira, Guild Herald"
+lines = PackedStringArray("You found the Orb of Flame! One recovered, four still missing.", "There is an old inscription about the Orbs: 'Apart, they guard what together must not wake.'", "Why would someone separate them on purpose? King Aldric may know more than the council has told us.", "For now, keep the Orb safe. We must learn more before seeking the next one.")

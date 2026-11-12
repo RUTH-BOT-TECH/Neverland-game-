@@ -34,7 +34,7 @@ func _on_orb_added(_orb_id: StringName) -> void:
 
 func _refresh() -> void:
 	if inventory.has_orb(&"orb_flame"):
-		info.text = "Orb of Flame recovered  •  Orbs %d/5" % inventory.orb_count()
+		info.text = "Orb of Flame recovered  •  Orbs %d/5  •  Speak to Mira" % inventory.orb_count()
 	elif quest_manager.status != quest_manager.QuestStatus.COMPLETED:
 		info.text = "Orbs %d/5  •  Finish Mira's quest to unlock the Flame trial" % inventory.orb_count()
 	elif not guardian.defeated:

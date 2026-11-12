@@ -15,6 +15,7 @@ signal dialogue_finished
 
 var _current_line := 0
 var _in_dialogue := false
+var _active_dialogue: Resource
 
 func _ready() -> void:
 	panel.hide()
@@ -29,7 +30,8 @@ func _process(_delta: float) -> void:
 	var p := player.global_position
 	var n := npc.global_position
 	var in_range := Vector2(p.x - n.x, p.z - n.z).length() <= interaction_distance
-	talk_button.visible = in_range and not _in_dialogue and npc.dialogue != null and not npc.dialogue.lines.is_empty()
+	var available: Resource = npc.current_dialogue()
+	talk_button.visible = in_range and player.controls_enabled and not _in_dialogue and available != null and not available.lines.is_empty()
 	if _in_dialogue and not in_range:
 		close_dialogue()
 
@@ -43,8 +45,15 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 func open_dialogue() -> void:
-	if not is_instance_valid(player) or not is_instance_valid(npc) or not talk_button.visible or npc.dialogue == null or npc.dialogue.lines.is_empty():
+	if not is_instance_valid(player) or not is_instance_valid(npc) or not player.controls_enabled:
 		return
+	var difference: Vector3 = player.global_position - npc.global_position
+	if Vector2(difference.x, difference.z).length() > interaction_distance:
+		return
+	var available: Resource = npc.current_dialogue()
+	if available == null or available.lines.is_empty():
+		return
+	_active_dialogue = available
 	_in_dialogue = true
 	_current_line = 0
 	npc.set_talking(true)
@@ -54,17 +63,19 @@ func open_dialogue() -> void:
 	_refresh_line()
 
 func _refresh_line() -> void:
-	speaker.text = npc.dialogue.speaker_name
-	line_label.text = npc.dialogue.lines[_current_line]
-	next_button.text = "Finish" if _current_line == npc.dialogue.lines.size() - 1 else "Next"
+	speaker.text = _active_dialogue.speaker_name
+	line_label.text = _active_dialogue.lines[_current_line]
+	next_button.text = "Finish" if _current_line == _active_dialogue.lines.size() - 1 else "Next"
 
 func advance_dialogue() -> void:
 	if not _in_dialogue:
 		return
 	_current_line += 1
-	if _current_line >= npc.dialogue.lines.size():
+	if _current_line >= _active_dialogue.lines.size():
+		var completed_opening: bool = _active_dialogue == npc.dialogue
 		close_dialogue()
-		dialogue_finished.emit()
+		if completed_opening:
+			dialogue_finished.emit()
 	else:
 		_refresh_line()
 
@@ -72,6 +83,7 @@ func close_dialogue() -> void:
 	if not _in_dialogue:
 		return
 	_in_dialogue = false
+	_active_dialogue = null
 	panel.hide()
 	if is_instance_valid(npc):
 		npc.set_talking(false)

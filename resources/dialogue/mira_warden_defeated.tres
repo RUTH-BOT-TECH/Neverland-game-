@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/dialogue_data.gd" id="DialogueData"]
+
+[resource]
+script = ExtResource("DialogueData")
+speaker_name = "Mira, Guild Herald"
+lines = PackedStringArray("The Cinder Warden is defeated? Then the Orb of Flame is within reach.", "Return to the shrine and collect it. I want to hear what you discover.")

@@ -36,7 +36,7 @@ func run_test() -> void:
 		world.get_node("Player").global_position = orb.global_position + Vector3(1, -1.75, 0)
 		ok = orb.try_collect() and FileAccess.file_exists(PATH) and not world.get_node("LocalSaveManager").writes_blocked
 	else:
-		ok = quest.objective_index == 2 and quest.session_xp == 25 and guardian.defeated and orb.is_collected and inventory.has_orb(&"orb_flame")
+		ok = quest.objective_index == 2 and quest.session_xp == 25 and guardian.defeated and orb.is_collected and inventory.has_orb(&"orb_flame") and world.get_node("VillageHerald").current_dialogue() == world.get_node("VillageHerald").flame_recovered_dialogue
 		clean()
 	print("Restart smoke ", args[0], ": ", "PASS" if ok else "FAIL")
 	world.free()
